@@ -1,0 +1,8 @@
+{
+  "name" : "ruin-maker",
+  "version" : "0.1.0",
+  "title" : "Ruin maker",
+  "author" : "Bilka",
+  "description" : "Generates Lua code for ruins for the ruins mod from setups selected in-game.",
+  "factorio_version" : "1.0"
+}
