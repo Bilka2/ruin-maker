@@ -88,6 +88,10 @@ end
 
 script.on_event({defines.events.on_player_selected_area, defines.events.on_player_alt_selected_area}, function(event)
   if event.item ~= "ruin-maker" then return end
+  if global.selection[event.player_index] ~= nil then
+    game.get_player(event.player_index).print({"error.ruin-maker-already-in-progress"})
+    return
+  end
 
   local area = util.expand_area_to_tile_border(event.area)
   local center = util.get_center_of_area(area)
