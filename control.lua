@@ -1,47 +1,98 @@
-local math2d = require("math2d")
 local util = require("utilities")
+local output_selection = require("output")
 
-local function output_entities(entities, center)
-  local output = {}
-  output[1] = "return function(center, surface)\n"
-  output[2] = "    local ce = function(params)\n"
-  output[3] = "        params.raise_built = true\n"
-  output[4] = "        return surface.create_entity(params)\n"
-  output[5] = "    end\n"
-  output[6] = "    local fN = game.forces.neutral\n"
-  output[7] = "    local direct = defines.direction\n"
-
-  for _, entity in pairs(entities) do
-    local vec = util.vector_from_center(entity.position, center)
-
-    output[#output+1] = "    ce{name = \"" .. entity.name .. "\", position = "
-    output[#output+1] = "{center.x + (" .. vec.x .. "), center.y + (" .. vec.y .. ")}"
-    if entity.direction ~= defines.direction.north then
-      output[#output+1] = ", direction = direct." .. util.direction_to_str(entity.direction)
-    end
-    output[#output+1] = ", force=fN}\n"
+local function discard_selection(player_index)
+  for _, render in pairs(global.selection[player_index].renders) do
+    rendering.destroy(render)
   end
-
-  output[#output+1] = "end\n"
-  log(table.concat(output))
+  global.selection[player_index] = nil
 end
 
-script.on_event(defines.events.on_player_selected_area, function(event)
-  if event.item ~= "ruin-maker" then return end
-  local player = game.get_player(event.player_index)
-  local center = math2d.bounding_box.get_centre(event.area)
-  output_entities(event.entities, center)
-  for _, tile in pairs(event.tiles) do
-    player.print(tile.name)
+script.on_event(defines.events.on_gui_click, function(event)
+  if event.element.name == "ruin-maker-confirm" then
+    local data = global.selection[event.player_index]
+    output_selection(data.entities, data.tiles, data.tile_filter, data.center, event.player_index)
+    discard_selection(event.player_index)
+    event.element.parent.destroy()
   end
 end)
 
-script.on_event(defines.events.on_player_alt_selected_area, function(event)
-  if event.item ~= "ruin-maker" then return end
-  local player = game.get_player(event.player_index)
-  local center = math2d.bounding_box.get_centre(event.area)
-  output_entities(event.entities, center)
-  for _, tile in pairs(event.tiles) do
-    player.print(tile.name)
+script.on_event(defines.events.on_gui_checked_state_changed, function(event)
+  if event.element.parent and event.element.parent.name == "ruin-maker-config" then
+    global.selection[event.player_index].tile_filter[event.element.name] = false
   end
+end)
+
+local function config_gui(player, tile_names)
+  local gui = player.gui.screen.add{type = "frame", name = "ruin-maker-config", caption = {"gui.ruin-maker-config"}, direction = "vertical"}
+  gui.force_auto_center()
+
+  gui.add{type = "label", caption = {"gui.ruin-maker-tile-filter"}}
+  for tile_name in pairs(tile_names) do
+    gui.add{type = "checkbox", name = tile_name, caption = tile_name, state = true}
+  end
+
+  gui.add{type = "button", name = "ruin-maker-confirm", caption = {"gui.ruin-maker-confirm"}}
+end
+
+local function configure_selection(entities, tiles, center, player_index, renders)
+  local tile_names = {}
+  for _, tile in pairs(tiles) do
+    tile_names[tile.name] = true
+  end
+
+  config_gui(game.get_player(player_index), tile_names)
+
+  global.selection[player_index] = {
+    entities = entities,
+    tiles = tiles,
+    tile_filter = tile_names,
+    center = center,
+    renders = renders
+  }
+end
+
+local function render_selection(area, center, surface)
+  local renders = {}
+  renders[#renders+1] = rendering.draw_line(
+  {
+    from = {center.x + 0.5, center.y},
+    to = {center.x - 0.5, center.y},
+    width = 4,
+    color = {1, 1, 1},
+    surface = surface
+  })
+  renders[#renders+1] = rendering.draw_line(
+  {
+    from = {center.x, center.y + 0.5},
+    to = {center.x, center.y - 0.5},
+    width = 4,
+    color = {1, 1, 1},
+    surface = surface
+  })
+  renders[#renders+1] = rendering.draw_rectangle(
+  {
+    left_top = area.left_top,
+    right_bottom  = area.right_bottom,
+    filled = false,
+    width = 4,
+    color = {1, 1, 1},
+    surface = surface
+  })
+  return renders
+end
+
+script.on_event({defines.events.on_player_selected_area, defines.events.on_player_alt_selected_area}, function(event)
+  if event.item ~= "ruin-maker" then return end
+
+  local area = util.expand_area_to_tile_border(event.area)
+  local center = util.get_center_of_area(area)
+
+  local renders = render_selection(area, center, event.surface)
+
+  configure_selection(event.entities, event.tiles, center, event.player_index, renders)
+end)
+
+script.on_init(function()
+  global.selection = {}
 end)
