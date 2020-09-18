@@ -9,12 +9,12 @@ util.direction_to_str = function(direction)
   return dirs[direction]
 end
 
-util.round = function(number)
-  return math.floor(number * 10 + 0.5) / 10
+util.align_to_grid = function(number) -- round to .5 or .0
+  return math.floor((number / 0.5 ) + 0.5) * 0.5
 end
 
 util.vector_from_center = function(position, center)
-  return {x = util.round(position.x - center.x), y = util.round(position.y - center.y)}
+  return {x = util.align_to_grid(position.x - center.x), y = util.align_to_grid(position.y - center.y)}
 end
 
 return util
