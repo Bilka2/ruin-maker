@@ -14,6 +14,9 @@ script.on_event(defines.events.on_gui_click, function(event)
     output_selection(data.entities, data.tiles, data.tile_filter, data.center, event.player_index)
     discard_selection(event.player_index)
     event.element.parent.destroy()
+  elseif event.element.name == "ruin-maker-cancel" then
+    discard_selection(event.player_index)
+    event.element.parent.destroy()
   end
 end)
 
@@ -33,6 +36,7 @@ local function config_gui(player, tile_names)
   end
 
   gui.add{type = "button", name = "ruin-maker-confirm", caption = {"gui.ruin-maker-confirm"}}
+  gui.add{type = "button", name = "ruin-maker-cancel", caption = {"gui.ruin-maker-cancel"}}
 end
 
 local function configure_selection(entities, tiles, center, player_index, renders)
