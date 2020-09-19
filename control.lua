@@ -10,7 +10,7 @@ end
 
 local function confirm_selection(player_index, name)
   local data = global.selection[player_index]
-  output_selection(data.entities, data.tiles, data.tile_filter, data.center, name, player_index)
+  output_selection(data.entities, data.tiles, data.tile_filter, data.center, name ~= "" and name or "unknown", player_index)
   discard_selection(player_index)
 end
 
@@ -42,7 +42,7 @@ local function config_gui(player, tile_names)
   gui.force_auto_center()
 
   gui.add{type = "label", caption = {"gui.ruin-maker-name"}}
-  local name = gui.add{type = "textfield", name = "ruin-maker-name", text = "unknown", clear_and_focus_on_right_click = true}
+  local name = gui.add{type = "textfield", name = "ruin-maker-name", clear_and_focus_on_right_click = true}
   name.focus()
 
   gui.add{type = "label", caption = {"gui.ruin-maker-tile-filter"}}
