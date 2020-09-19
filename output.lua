@@ -46,7 +46,9 @@ local function create_entity(entities, center, out)
       out[#out+1] = "dir = \"" .. util.direction_to_str(dir) .. "\", "
     end
     if entity.is_entity_with_owner then
-      out[#out+1] = "force = \"neutral\", "
+      if entity.force.name == "enemy" then
+        out[#out+1] = "force = \"enemy\", "
+      end
     end
     if entity.is_entity_with_health and (entity.get_health_ratio() ~= 1) then
       local dmg = math.floor(entity.prototype.max_health - entity.health)

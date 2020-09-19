@@ -42,7 +42,8 @@ local function config_gui(player, tile_names)
   gui.force_auto_center()
 
   gui.add{type = "label", caption = {"gui.ruin-maker-name"}}
-  gui.add{type = "textfield", name = "ruin-maker-name", text = "unknown", clear_and_focus_on_right_click = true}
+  local name = gui.add{type = "textfield", name = "ruin-maker-name", text = "unknown", clear_and_focus_on_right_click = true}
+  name.focus()
 
   gui.add{type = "label", caption = {"gui.ruin-maker-tile-filter"}}
   for tile_name in pairs(tile_names) do
