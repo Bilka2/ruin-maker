@@ -9,15 +9,15 @@ util.direction_to_str = function(direction)
   return dirs[direction]
 end
 
-local function align_to_grid(number) -- round to .5 or .0
-  return math.floor((number / 0.5 ) + 0.5) * 0.5
+local function round(number) -- round to two digits after the comma
+  return math.floor((number * 100 ) + 0.5) / 100
 end
 
 util.vector_from_center = function(position, center)
   return
   {
-    x = align_to_grid(position.x - center.x),
-    y = align_to_grid(position.y - center.y)
+    x = round(position.x - center.x),
+    y = round(position.y - center.y)
   }
 end
 
