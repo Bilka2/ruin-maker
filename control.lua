@@ -8,11 +8,15 @@ local function discard_selection(player_index)
   global.selection[player_index] = nil
 end
 
+local function confirm_selection(player_index, name)
+  local data = global.selection[player_index]
+  output_selection(data.entities, data.tiles, data.tile_filter, data.center, name, player_index)
+  discard_selection(player_index)
+end
+
 script.on_event(defines.events.on_gui_click, function(event)
   if event.element.name == "ruin-maker-confirm" then
-    local data = global.selection[event.player_index]
-    output_selection(data.entities, data.tiles, data.tile_filter, data.center, event.player_index)
-    discard_selection(event.player_index)
+    confirm_selection(event.player_index, event.element.parent["ruin-maker-name"].text)
     event.element.parent.destroy()
   elseif event.element.name == "ruin-maker-cancel" then
     discard_selection(event.player_index)
@@ -26,9 +30,19 @@ script.on_event(defines.events.on_gui_checked_state_changed, function(event)
   end
 end)
 
+script.on_event(defines.events.on_gui_confirmed, function(event)
+  if event.element.name == "ruin-maker-name" then
+    confirm_selection(event.player_index, event.element.text)
+    event.element.parent.destroy()
+  end
+end)
+
 local function config_gui(player, tile_names)
   local gui = player.gui.screen.add{type = "frame", name = "ruin-maker-config", caption = {"gui.ruin-maker-config"}, direction = "vertical"}
   gui.force_auto_center()
+
+  gui.add{type = "label", caption = {"gui.ruin-maker-name"}}
+  gui.add{type = "textfield", name = "ruin-maker-name", text = "unknown", clear_and_focus_on_right_click = true}
 
   gui.add{type = "label", caption = {"gui.ruin-maker-tile-filter"}}
   for tile_name in pairs(tile_names) do

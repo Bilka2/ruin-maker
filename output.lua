@@ -76,7 +76,7 @@ local function create_entity(entities, center, out)
   out[#out+1] = "  },\n"
 end
 
-output = function(entities, tiles, tile_filter, center, player_index)
+output = function(entities, tiles, tile_filter, center, name, player_index)
   local out = {}
   out[1] = "return\n"
   out[2] = "{\n"
@@ -89,7 +89,7 @@ output = function(entities, tiles, tile_filter, center, player_index)
   end
 
   out[#out+1] = "}\n"
-  log(table.concat(out))
+  game.write_file("ruins/" .. name .. ".lua", table.concat(out))
 end
 
 return output
