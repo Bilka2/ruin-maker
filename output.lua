@@ -37,16 +37,16 @@ local function create_entity(entities, center, out)
     local vec = util.vector_from_center(entity.position, center)
 
     out[#out+1] = "    {\"" .. entity.name .. "\", "
-    out[#out+1] = "{x = " .. vec.x .. ", y = " .. vec.y .. "}"
+    out[#out+1] = "{x = " .. vec.x .. ", y = " .. vec.y .. "}, "
 
-    out[#out+1] = ", {" -- extra options start
+    out[#out+1] = "{" -- extra options start
 
     local dir = entity.direction
     if dir ~= defines.direction.north then
       out[#out+1] = "dir = \"" .. util.direction_to_str(dir) .. "\", "
     end
     if entity.is_entity_with_owner then
-      if entity.force.name == "enemy" then
+      if entity.force.name ~= "player" and entity.force.name ~= "neutral" then
         out[#out+1] = "force = \"enemy\", "
       end
     end
@@ -58,8 +58,7 @@ local function create_entity(entities, center, out)
       local inv = nil
       if entity.type == "container" then
         inv = entity.get_inventory(defines.inventory.chest)
-      end
-      if entity.type == "ammo-turret" then
+      elseif entity.type == "ammo-turret" then
         inv = entity.get_inventory(defines.inventory.turret_ammo)
       end
       if inv then
