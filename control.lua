@@ -10,65 +10,81 @@ end
 
 local function confirm_selection(player_index, name)
   local data = global.selection[player_index]
-  output_selection(data.entities, data.tiles, data.tile_filter, data.center, name ~= "" and name or "unknown", player_index)
+  output_selection(data.entities, data.tiles, data.tile_filter, data.center, name ~= "" and name or "unknown", data["ruin-maker-damage"], data["ruin-maker-items"], player_index)
   discard_selection(player_index)
 end
 
 script.on_event(defines.events.on_gui_click, function(event)
   if event.element.name == "ruin-maker-confirm" then
-    confirm_selection(event.player_index, event.element.parent["ruin-maker-name"].text)
-    event.element.parent.destroy()
+    confirm_selection(event.player_index, global.selection[event.player_index].name.text)
+    game.get_player(event.player_index).gui.screen["ruin-maker-main"].destroy()
   elseif event.element.name == "ruin-maker-cancel" then
     discard_selection(event.player_index)
-    event.element.parent.destroy()
+    game.get_player(event.player_index).gui.screen["ruin-maker-main"].destroy()
   end
 end)
 
 script.on_event(defines.events.on_gui_checked_state_changed, function(event)
-  if event.element.parent and event.element.parent.name == "ruin-maker-config" then
-    global.selection[event.player_index].tile_filter[event.element.name] = false
+  if event.element.parent and event.element.parent.name == "ruin-maker-tile-filter" then
+    global.selection[event.player_index].tile_filter[event.element.name] = event.element.state
+  elseif event.element.parent and event.element.parent.name == "ruin-maker-config" then
+    global.selection[event.player_index][event.element.name] = event.element.state
   end
 end)
 
 script.on_event(defines.events.on_gui_confirmed, function(event)
-  if event.element.name == "ruin-maker-name" then
+  if event.element == global.selection[event.player_index].name then
     confirm_selection(event.player_index, event.element.text)
-    event.element.parent.destroy()
+    game.get_player(event.player_index).gui.screen["ruin-maker-main"].destroy()
   end
 end)
 
-local function config_gui(player, tile_names)
-  local gui = player.gui.screen.add{type = "frame", name = "ruin-maker-config", caption = {"gui.ruin-maker-config"}, direction = "vertical"}
+local function config_gui(player, tile_names, area)
+  local gui = player.gui.screen.add{type = "frame", caption = {"gui.ruin-maker-config"}, direction = "vertical", name = "ruin-maker-main"}
   gui.force_auto_center()
+  gui = gui.add{type = "frame", style = "inside_shallow_frame_with_padding"}
+  gui = gui.add{type = "table", name = "ruin-maker-config", style = "bordered_table", column_count = 1}
 
-  gui.add{type = "label", caption = {"gui.ruin-maker-name"}}
-  local name = gui.add{type = "textfield", name = "ruin-maker-name", clear_and_focus_on_right_click = true}
-  name.focus()
 
-  gui.add{type = "label", caption = {"gui.ruin-maker-tile-filter"}}
-  for tile_name in pairs(tile_names) do
-    gui.add{type = "checkbox", name = tile_name, caption = tile_name, state = true}
+  do
+    local flow = gui.add{type="flow", direction = "vertical"}
+    flow.add{type = "label", caption = {"gui.ruin-maker-name"}}
+    global.selection[player.index].name = flow.add{type = "textfield"}
+    global.selection[player.index].name.focus()
   end
 
-  gui.add{type = "button", name = "ruin-maker-confirm", caption = {"gui.ruin-maker-confirm"}}
+  if next(tile_names) ~= nil then
+    local frame = gui.add{type="flow", name = "ruin-maker-tile-filter", direction = "vertical"}
+    frame.add{type = "label", caption = {"gui.ruin-maker-tile-filter"}}
+    for tile_name in pairs(tile_names) do
+      frame.add{type = "checkbox", name = tile_name, caption = tile_name, state = true}
+    end
+  end
+
+  gui.add{type = "checkbox", name = "ruin-maker-damage", caption = {"gui.ruin-maker-damage"}, state = true}
+  gui.add{type = "checkbox", name = "ruin-maker-items", caption = {"gui.ruin-maker-items"}, state = true}
+
   gui.add{type = "button", name = "ruin-maker-cancel", caption = {"gui.ruin-maker-cancel"}}
+  gui.add{type = "button", name = "ruin-maker-confirm", caption = {"gui.ruin-maker-confirm"}}
 end
 
-local function configure_selection(entities, tiles, center, player_index, renders)
+local function configure_selection(entities, tiles, area, center, player_index, renders)
   local tile_names = {}
   for _, tile in pairs(tiles) do
     tile_names[tile.name] = true
   end
-
-  config_gui(game.get_player(player_index), tile_names)
 
   global.selection[player_index] = {
     entities = entities,
     tiles = tiles,
     tile_filter = tile_names,
     center = center,
-    renders = renders
+    renders = renders,
+    ["ruin-maker-damage"] = true,
+    ["ruin-maker-items"] = true
   }
+
+  config_gui(game.get_player(player_index), tile_names, area)
 end
 
 local function render_selection(area, center, surface)
@@ -113,7 +129,7 @@ script.on_event({defines.events.on_player_selected_area, defines.events.on_playe
 
   local renders = render_selection(area, center, event.surface)
 
-  configure_selection(event.entities, event.tiles, center, event.player_index, renders)
+  configure_selection(event.entities, event.tiles, area, center, event.player_index, renders)
 end)
 
 script.on_init(function()

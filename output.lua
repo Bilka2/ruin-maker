@@ -27,7 +27,7 @@ local function set_tiles(tiles, tile_filter, center, out)
   out[#out+1] = "  }\n"
 end
 
-local function create_entity(entities, center, out)
+local function create_entity(entities, center, damage, items, out)
   if next(entities) == nil then return end
 
   out[#out+1] = "  entities =\n"
@@ -50,11 +50,11 @@ local function create_entity(entities, center, out)
         out[#out+1] = "force = \"enemy\", "
       end
     end
-    if entity.is_entity_with_health and (entity.get_health_ratio() ~= 1) then
+    if damage and entity.is_entity_with_health and (entity.get_health_ratio() ~= 1) then
       local dmg = math.floor(entity.prototype.max_health - entity.health)
       out[#out+1] = "dmg = {dmg = " .. dmg .. "}, "
     end
-    if entity.has_items_inside() then
+    if items and entity.has_items_inside() then
       local inv = nil
       if entity.type == "container" then
         inv = entity.get_inventory(defines.inventory.chest)
@@ -77,11 +77,11 @@ local function create_entity(entities, center, out)
   out[#out+1] = "  },\n"
 end
 
-output = function(entities, tiles, tile_filter, center, name, player_index)
+output = function(entities, tiles, tile_filter, center, name, damage, items, player_index)
   local out = {}
   out[1] = "return\n"
   out[2] = "{\n"
-  create_entity(entities, center, out)
+  create_entity(entities, center, damage, items, out)
   set_tiles(tiles, tile_filter, center, out)
 
   if out[3] == nil then
