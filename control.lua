@@ -45,6 +45,21 @@ local function config_gui(player, tile_names, area)
   gui = gui.add{type = "frame", style = "inside_shallow_frame_with_padding"}
   gui = gui.add{type = "table", name = "ruin-maker-config", style = "bordered_table", column_count = 1}
 
+  do
+    local w = area.right_bottom.x - area.left_top.x
+    local h = area.right_bottom.y - area.left_top.y
+    local name = "too big"
+    if w <= 8 and h <= 8 then
+      name = "small"
+    elseif w <= 16 and h <= 16 then
+      name = "medium"
+    elseif w <= 32 and h <= 32 then
+      name = "large"
+    end
+
+    local flow = gui.add{type="flow", direction = "vertical"}
+    flow.add{type = "label", caption = {"gui.ruin-maker-size", name, w, h}}
+  end
 
   do
     local flow = gui.add{type="flow", direction = "vertical"}
