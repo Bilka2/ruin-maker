@@ -56,7 +56,7 @@ local function create_entity(entities, center, damage, items, out)
     end
     if items and entity.has_items_inside() then
       local inv = nil
-      if entity.type == "container" then
+      if entity.type == "container" or entity.type == "logistic-container" then
         inv = entity.get_inventory(defines.inventory.chest)
       elseif entity.type == "ammo-turret" then
         inv = entity.get_inventory(defines.inventory.turret_ammo)

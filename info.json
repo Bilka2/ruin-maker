@@ -3,7 +3,7 @@
   "version" : "0.1.0",
   "title" : "Ruin maker",
   "author" : "Bilka",
-  "description" : "Generates Lua code for ruins for the ruins mod from setups selected in-game.",
+  "description" : "Generates ruin files for 'The Ruins Mod' from setups selected in-game. The ruin selection tool can be obtained from the shortcut bar.",
   "factorio_version" : "1.0",
   "package":
   {

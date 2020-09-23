@@ -3,8 +3,8 @@ data:extend
   {
     type = "selection-tool",
     name = "ruin-maker",
-    icon = "__core__/graphics/empty.png",
-    icon_size = 1,
+    icon = "__ruin-maker__/graphics/ruin-maker.png",
+    icon_size = 64,
     stack_size = 1,
     selection_color = {1, 1, 1},
     alt_selection_color = {r = 1},
@@ -12,7 +12,6 @@ data:extend
     alt_selection_mode = {"any-tile", "any-entity"},
     selection_cursor_box_type = "entity",
     alt_selection_cursor_box_type = "train-visualization",
-    flags = {"only-in-cursor"},
     always_include_tiles = true
   },
   {
@@ -21,9 +20,10 @@ data:extend
     action = "create-blueprint-item",
     icon =
     {
-      filename = "__core__/graphics/empty.png",
-      size = 1
+      filename = "__ruin-maker__/graphics/ruin-maker-shortcut.png",
+      size = 32
     },
-    item_to_create = "ruin-maker"
+    item_to_create = "ruin-maker",
+    style = "blue"
   }
 }
