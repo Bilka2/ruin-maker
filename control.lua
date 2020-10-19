@@ -33,6 +33,7 @@ script.on_event(defines.events.on_gui_checked_state_changed, function(event)
 end)
 
 script.on_event(defines.events.on_gui_confirmed, function(event)
+  if not global.selection[event.player_index] then return end
   if event.element == global.selection[event.player_index].name then
     confirm_selection(event.player_index, event.element.text)
     game.get_player(event.player_index).gui.screen["ruin-maker-main"].destroy()
