@@ -6,11 +6,11 @@
   "description" : "Generates ruin files for 'The Ruins Mod' from setups selected in-game. The ruin selection tool can be obtained from the shortcut bar.",
   "factorio_version" : "1.0",
   "package":
-  {
+  { 
     "scripts":
     {
       "prepackage": "./scripts/extract_changes.sh",
-      "publish": "./scripts/github_release.sh"
+      "postpublish": "./scripts/github_release.sh"
     }
   }
 }
