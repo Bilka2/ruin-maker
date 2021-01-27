@@ -4,7 +4,7 @@
   "title" : "Ruin maker",
   "author" : "Bilka",
   "description" : "Generates ruin files for 'The Ruins Mod' from setups selected in-game. The ruin selection tool can be obtained from the shortcut bar.",
-  "factorio_version" : "1.0",
+  "factorio_version" : "1.1",
   "package":
   { 
     "scripts":

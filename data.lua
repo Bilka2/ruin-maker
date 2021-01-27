@@ -12,18 +12,19 @@ data:extend
     alt_selection_mode = {"any-tile", "any-entity"},
     selection_cursor_box_type = "entity",
     alt_selection_cursor_box_type = "train-visualization",
-    always_include_tiles = true
+    always_include_tiles = true,
+    flags = {"spawnable"}
   },
   {
     type = "shortcut",
     name = "give-ruin-maker",
-    action = "create-blueprint-item",
+    action = "spawn-item",
     icon =
     {
       filename = "__ruin-maker__/graphics/ruin-maker-shortcut.png",
       size = 32
     },
-    item_to_create = "ruin-maker",
+    item_to_spawn = "ruin-maker",
     style = "blue"
   }
 }
