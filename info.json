@@ -1,6 +1,6 @@
 {
   "name" : "ruin-maker",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "title" : "Ruin maker",
   "author" : "Bilka",
   "description" : "Generates ruin files for 'The Ruins Mod' from setups selected in-game. The ruin selection tool can be obtained from the shortcut bar.",
