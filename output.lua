@@ -27,7 +27,7 @@ local function set_tiles(tiles, tile_filter, center, out)
   out[#out+1] = "  }\n"
 end
 
-local function create_entity(entities, center, damage, items, out)
+local function create_entity(entities, center, damage, items, fluids, out)
   if next(entities) == nil then return end
 
   out[#out+1] = "  entities =\n"
@@ -65,6 +65,9 @@ local function create_entity(entities, center, damage, items, out)
         out[#out+1] = "items = " .. serpent.line(inv.get_contents()) .. ", "
       end
     end
+    if fluids and entity.get_fluid_count() > 0 then
+      out[#out+1] = "fluids = " .. serpent.line(entity.get_fluid_contents()) .. ", "
+    end
     if entity.type == "assembling-machine" then
       local recipe = entity.get_recipe()
       if recipe then
@@ -77,11 +80,11 @@ local function create_entity(entities, center, damage, items, out)
   out[#out+1] = "  },\n"
 end
 
-output = function(entities, tiles, tile_filter, center, name, damage, items, player_index)
+output = function(entities, tiles, tile_filter, center, name, damage, items, fluids, player_index)
   local out = {}
   out[1] = "return\n"
   out[2] = "{\n"
-  create_entity(entities, center, damage, items, out)
+  create_entity(entities, center, damage, items, fluids, out)
   set_tiles(tiles, tile_filter, center, out)
 
   if out[3] == nil then

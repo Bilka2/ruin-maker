@@ -10,7 +10,7 @@ end
 
 local function confirm_selection(player_index, name)
   local data = global.selection[player_index]
-  output_selection(data.entities, data.tiles, data.tile_filter, data.center, name ~= "" and name or "unknown", data["ruin-maker-damage"], data["ruin-maker-items"], player_index)
+  output_selection(data.entities, data.tiles, data.tile_filter, data.center, name ~= "" and name or "unknown", data["ruin-maker-damage"], data["ruin-maker-items"], data["ruin-maker-fluids"], player_index)
   discard_selection(player_index)
 end
 
@@ -79,6 +79,7 @@ local function config_gui(player, tile_names, area)
 
   gui.add{type = "checkbox", name = "ruin-maker-damage", caption = {"gui.ruin-maker-damage"}, state = true}
   gui.add{type = "checkbox", name = "ruin-maker-items", caption = {"gui.ruin-maker-items"}, state = true}
+  gui.add{type = "checkbox", name = "ruin-maker-fluids", caption = {"gui.ruin-maker-fluids"}, state = true}
 
   gui.add{type = "button", name = "ruin-maker-cancel", caption = {"gui.ruin-maker-cancel"}}
   gui.add{type = "button", name = "ruin-maker-confirm", caption = {"gui.ruin-maker-confirm"}}
@@ -97,7 +98,8 @@ local function configure_selection(entities, tiles, area, center, player_index, 
     center = center,
     renders = renders,
     ["ruin-maker-damage"] = true,
-    ["ruin-maker-items"] = true
+    ["ruin-maker-items"] = true,
+    ["ruin-maker-fluids"] = true
   }
 
   config_gui(game.get_player(player_index), tile_names, area)
